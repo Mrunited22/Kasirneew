@@ -12,7 +12,20 @@
           "package_name": "com.iyonzkasir"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "49269164832-7bttbvi8pp1ccu7qrbrfbumndj3kiuth.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.iyonzkasir",
+            "certificate_hash": "cb604fc205422fb62a50042eb9f1a14dd3e6c9d4"
+          }
+        },
+        {
+          "client_id": "49269164832-1enmsvmo2qtb826ndrviobsutu7lf3kk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCSQ7YHDHKNMNK5PrQza_TSvYNLBc5jWIo"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "49269164832-1enmsvmo2qtb826ndrviobsutu7lf3kk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

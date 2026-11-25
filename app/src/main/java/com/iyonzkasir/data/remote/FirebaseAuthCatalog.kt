@@ -1,6 +1,7 @@
 package com.iyonzkasir.data.remote
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.iyonzkasir.core.SyncStatus
@@ -37,6 +38,32 @@ internal class FirebaseCatalogHelper {
         val res = FbRefs.auth.signInWithEmailAndPassword(email.trim(), password).await()
         val u = res.user ?: error("User tidak ditemukan")
         CloudOwnerInfo(u.uid, u.email ?: email.trim(), u.displayName ?: "")
+    }
+
+    suspend fun loginWithGoogle(idToken: String): Result<CloudOwnerInfo> = runCatching {
+        val cred = GoogleAuthProvider.getCredential(idToken, null)
+        val res = FbRefs.auth.signInWithCredential(cred).await()
+        val u = res.user ?: error("Login Google gagal")
+        val bizRef = FbRefs.biz(u.uid)
+        val bizDoc = bizRef.get().await()
+        val isNew = !bizDoc.exists()
+        if (isNew) {
+            val ownerName = (u.displayName ?: "").trim().ifBlank { "Owner" }
+            val bizName = "$ownerName Store"
+            bizRef.set(mapOf(
+                "ownerUid" to u.uid,
+                "ownerEmail" to (u.email ?: ""),
+                "ownerName" to ownerName,
+                "businessName" to bizName,
+                "createdAt" to System.currentTimeMillis()
+            ), SetOptions.merge()).await()
+        }
+        CloudOwnerInfo(
+            uid = u.uid,
+            email = u.email ?: "",
+            displayName = u.displayName ?: "",
+            isNewBusiness = isNew
+        )
     }
 
     suspend fun pullSnapshot(businessId: String, sinceDays: Int): Result<CloudBundleData> = runCatching {

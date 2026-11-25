@@ -19,6 +19,15 @@ android {
         versionName = "2.0.0-dev"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -96,6 +105,11 @@ dependencies {
 
     // ── OkHttp ──
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // ── Google Sign-In (Credential Manager) ──
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 }
 
 ksp {

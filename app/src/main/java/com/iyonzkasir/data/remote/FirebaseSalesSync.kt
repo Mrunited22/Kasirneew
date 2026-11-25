@@ -66,6 +66,7 @@ class FirebaseCloudGateway : CloudSyncGateway {
     override suspend fun registerOwner(email: String, password: String, ownerName: String, businessName: String) =
         catalog.registerOwner(email, password, ownerName, businessName)
     override suspend fun loginOwner(email: String, password: String) = catalog.loginOwner(email, password)
+    override suspend fun loginWithGoogle(idToken: String) = catalog.loginWithGoogle(idToken)
     override suspend fun sendPasswordReset(email: String): Result<Unit> = runCatching {
         FbRefs.auth.sendPasswordResetEmail(email.trim()).await(); Unit
     }

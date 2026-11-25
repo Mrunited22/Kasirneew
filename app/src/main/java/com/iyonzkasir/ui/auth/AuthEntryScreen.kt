@@ -20,6 +20,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.iyonzkasir.core.*
 import com.iyonzkasir.di.AppContainer
 import kotlinx.coroutines.launch
@@ -54,7 +61,84 @@ fun AuthEntryScreen(
         Spacer(Modifier.height(AppSp.md))
         Text("iyonzkasir", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Text("Kasir simpel untuk warung, gerobak & multi-cabang", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(Modifier.height(AppSp.xl))
+        Spacer(Modifier.height(AppSp.lg))
+
+        OutlinedButton(
+            onClick = {
+                val resId = ctx.resources.getIdentifier("default_web_client_id", "string", ctx.packageName)
+                val webClientId = if (resId != 0) ctx.getString(resId) else ""
+                if (webClientId.isBlank()) {
+                    errorMsg = "SHA-1 belum dipasang / google-services.json belum diupdate"
+                    return@OutlinedButton
+                }
+                busy = true; errorMsg = null; infoMsg = null
+                scope.launch {
+                    try {
+                        val option = GetSignInWithGoogleOption.Builder(webClientId).build()
+                        val req = GetCredentialRequest.Builder().addCredentialOption(option).build()
+                        val credRes = CredentialManager.create(ctx).getCredential(ctx, req)
+                        val cred = credRes.credential
+                        if (cred is CustomCredential && cred.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                            val idToken = GoogleIdTokenCredential.createFrom(cred.data).idToken
+                            app.gateway.loginWithGoogle(idToken).onSuccess { info ->
+                                SessionManager.bindBusiness(ctx, info.uid, "")
+                                if (info.isNewBusiness) {
+                                    val ownerN = info.displayName.ifBlank { "Owner" }
+                                    val bizN = businessName.trim().ifBlank { "$ownerN Store" }
+                                    val (outlet, owner) = app.teamRepo.createInitialSetup(info.uid, ownerN, bizN)
+                                    SessionManager.setViewingOutlet(ctx, outlet.id)
+                                    SessionManager.loginStaff(ctx, owner.toSessionUser())
+                                    app.syncNow()
+                                    busy = false
+                                    onAuthenticated(true)
+                                } else {
+                                    val syncRes = app.syncNow()
+                                    if (syncRes.isFailure) {
+                                        busy = false
+                                        errorMsg = "Gagal tarik data: ${syncRes.exceptionOrNull()?.message}"
+                                        return@onSuccess
+                                    }
+                                    if (app.teamRepo.getOwner() == null) {
+                                        app.teamRepo.createInitialSetup(info.uid, info.displayName.ifBlank { "Owner" }, "Usaha Saya")
+                                    }
+                                    busy = false
+                                    onAuthenticated(false)
+                                }
+                            }.onFailure {
+                                busy = false
+                                errorMsg = it.message ?: "Login Google gagal"
+                            }
+                        } else {
+                            busy = false
+                            errorMsg = "Tipe akun tidak dikenali"
+                        }
+                    } catch (_: GetCredentialCancellationException) {
+                        busy = false
+                    } catch (e: GetCredentialException) {
+                        busy = false
+                        errorMsg = "Google Sign-In gagal: ${e.localizedMessage ?: e.message}"
+                    } catch (e: Exception) {
+                        busy = false
+                        errorMsg = e.message ?: "Gagal login Google"
+                    }
+                }
+            },
+            enabled = !busy,
+            modifier = Modifier.fillMaxWidth().height(50.dp),
+            shape = AppRd.card
+        ) {
+            Icon(Icons.Default.AccountCircle, null, tint = AppColors.brand)
+            Spacer(Modifier.width(AppSp.sm))
+            Text("Lanjutkan dengan Google", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(Modifier.height(AppSp.md))
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            HorizontalDivider(Modifier.weight(1f))
+            Text("  atau pakai email  ", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            HorizontalDivider(Modifier.weight(1f))
+        }
+        Spacer(Modifier.height(AppSp.md))
 
         TabRow(selectedTabIndex = if (isRegisterMode) 1 else 0, containerColor = AppColors.card) {
             Tab(selected = !isRegisterMode, onClick = { isRegisterMode = false; errorMsg = null; infoMsg = null },

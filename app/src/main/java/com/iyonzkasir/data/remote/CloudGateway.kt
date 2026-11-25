@@ -5,7 +5,8 @@ import com.iyonzkasir.data.local.*
 data class CloudOwnerInfo(
     val uid: String,
     val email: String,
-    val displayName: String = ""
+    val displayName: String = "",
+    val isNewBusiness: Boolean = false
 )
 
 data class CloudBundleData(
@@ -35,6 +36,7 @@ interface CloudSyncGateway {
 
     suspend fun registerOwner(email: String, password: String, ownerName: String, businessName: String): Result<CloudOwnerInfo>
     suspend fun loginOwner(email: String, password: String): Result<CloudOwnerInfo>
+    suspend fun loginWithGoogle(idToken: String): Result<CloudOwnerInfo>
     suspend fun sendPasswordReset(email: String): Result<Unit>
     fun logout()
 
