@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#FF6B2C" />
+<title>Menu Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#FAF9F6;--bg-2:#F2F0EA;--bg-elev:#FFF;--border:rgba(20,15,10,.08);--border-s:rgba(20,15,10,.15);--text:#14110D;--text-2:#524B41;--text-3:#928A7E;--brand:#FF6B2C;--success:#1A9E4B;--danger:#DC2626;--r-lg:22px;--r-full:999px;--sh:0 2px 10px rgba(20,15,10,.06);--font:'Plus Jakarta Sans',sans-serif;--ease:cubic-bezier(.16,1,.3,1)}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow-x:hidden}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:none;background:none}
+.loading-screen,.error-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);z-index:100;padding:24px;text-align:center}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-retry{padding:12px 24px;background:var(--brand);color:#fff;border-radius:var(--r-full);font-weight:700}
+.header{position:sticky;top:0;z-index:50;background:var(--bg-elev);border-bottom:1px solid var(--border)}
+.header-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.header-logo{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.logo-placeholder{width:44px;height:44px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:22px;flex-shrink:0;overflow:hidden}
+.header h1{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-sub{font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meja-badge{display:none;padding:2px 8px;background:var(--brand);color:#fff;border-radius:var(--r-full);font-size:10px;font-weight:800}.meja-badge.show{display:inline-block}
+.icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;position:relative;background:var(--bg-2);flex-shrink:0}
+.cart-badge{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;padding:0 5px;background:var(--brand);color:#fff;border-radius:var(--r-full);display:none;align-items:center;justify-content:center;font-size:10px;font-weight:800;border:2px solid var(--bg-elev)}.cart-badge.show{display:flex}
+.main-content{max-width:900px;margin:0 auto;padding:16px 16px 130px}
+.search-wrap{position:relative;margin-bottom:12px}.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-3)}
+.search-wrap input{width:100%;padding:13px 16px 13px 44px;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--r-full);font-size:15px;box-shadow:var(--sh)}
+.cats-scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}.cats-scroll::-webkit-scrollbar{display:none}
+.cat-pill{flex-shrink:0;padding:9px 16px;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--r-full);font-size:13px;font-weight:700;color:var(--text-2)}
+.cat-pill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:16px 0 10px}
+.section-title{font-size:18px;font-weight:800}.section-count{font-size:12px;color:var(--text-3);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr);gap:16px}}
+.card{background:var(--bg-elev);border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--sh);cursor:pointer;display:flex;flex-direction:column}
+.card-media{position:relative;aspect-ratio:1/1;background:var(--bg-2);overflow:hidden}
+.card-media img{width:100%;height:100%;object-fit:cover}.card-media .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:36px}
+.card-body{padding:12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card-title{font-size:14px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-price{font-size:15px;font-weight:800;color:var(--brand);margin-top:auto}.card-old{font-size:11px;color:var(--text-3);text-decoration:line-through;margin-left:4px}
+.card-add{position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center}
+.badge-tag{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:var(--r-full);background:var(--brand);color:#fff;font-size:10px;font-weight:800}
+.card-habis{position:absolute;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800}
+.cart-bar{position:fixed;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;padding:12px 18px;display:none;align-items:center;justify-content:space-between;background:var(--brand);color:#fff;border-radius:var(--r-full);box-shadow:0 10px 28px rgba(0,0,0,.25);z-index:60;cursor:pointer}.cart-bar.show{display:flex}
+.cart-bar-count{padding:3px 10px;background:rgba(255,255,255,.25);border-radius:var(--r-full);font-size:13px;font-weight:800}
+.drawer-overlay,.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}.drawer-overlay.show,.sheet-overlay.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:440px;background:var(--bg-elev);z-index:210;transform:translateX(100%);transition:transform .3s var(--ease);display:flex;flex-direction:column}.drawer.show{transform:translateX(0)}
+.drawer-head,.drawer-foot{padding:16px 20px;border-bottom:1px solid var(--border)}.drawer-foot{border-top:1px solid var(--border);border-bottom:none}.drawer-head{display:flex;align-items:center;justify-content:space-between}
+.drawer-body{flex:1;overflow-y:auto;padding:14px 20px}
+.cart-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}.cart-item-img{width:52px;height:52px;border-radius:12px;background:var(--bg-2);overflow:hidden;display:grid;place-items:center;flex-shrink:0}.cart-item-img img{width:100%;height:100%;object-fit:cover}
+.cart-qty{display:flex;align-items:center;gap:4px;background:var(--bg-2);border-radius:var(--r-full);padding:3px}.cart-qty button{width:26px;height:26px;display:grid;place-items:center}
+.field{margin-bottom:10px}.field label{display:block;font-size:11px;font-weight:800;color:var(--text-3);margin-bottom:4px;text-transform:uppercase}
+.field input,.field textarea{width:100%;padding:10px 12px;background:var(--bg-2);border-radius:12px;border:1px solid transparent;font-size:14px}
+.summary{margin:10px 0;padding:10px 0;border-top:1px dashed var(--border-s);border-bottom:1px dashed var(--border-s);font-size:13px}
+.summary-row,.total-row{display:flex;justify-content:space-between;margin-bottom:4px}.total-row{font-size:17px;font-weight:800;margin:8px 0 12px}
+.btn-checkout{width:100%;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:var(--r-full);font-weight:800}
+.btn-ghost{width:100%;height:38px;margin-top:6px;color:var(--text-3);font-size:13px;font-weight:600}
+.sheet{position:fixed;left:50%;bottom:0;width:100%;max-width:560px;max-height:90vh;background:var(--bg-elev);border-radius:24px 24px 0 0;z-index:230;transform:translate(-50%,100%);transition:transform .3s var(--ease);display:flex;flex-direction:column;overflow:hidden}.sheet.show{transform:translate(-50%,0)}
+.sheet-close{position:absolute;top:12px;right:12px;width:36px;height:36px;display:grid;place-items:center;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;z-index:11}
+.sheet-scroll{overflow-y:auto;flex:1}.sheet-hero{position:relative;aspect-ratio:16/10;background:var(--bg-2)}.sheet-hero img{width:100%;height:100%;object-fit:cover}.sheet-hero .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:56px}
+.sheet-body{padding:18px}.sheet-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.btn-primary{flex:1;height:48px;background:var(--brand);color:#fff;border-radius:var(--r-full);font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}.btn-primary:disabled{opacity:.45}
+.qty-ctrl{display:flex;align-items:center;gap:6px;background:var(--bg-2);border-radius:var(--r-full);padding:4px 8px}.qty-btn{width:30px;height:30px;display:grid;place-items:center}
+.b-group{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border-s)}.b-opt{display:flex;align-items:center;gap:10px;padding:10px;margin-top:6px;border-radius:12px;background:var(--bg-2);cursor:pointer}.b-opt.sel{background:rgba(255,107,44,.12);outline:1.5px solid var(--brand)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}.modal-overlay.show{display:flex}
+.modal{background:var(--bg-elev);border-radius:24px;padding:24px;width:100%;max-width:380px;text-align:center}
+.toasts{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:var(--text);color:#fff;padding:10px 18px;border-radius:var(--r-full);font-size:13px;font-weight:600}.toast.err{background:var(--danger)}
+</style>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen"><div class="spinner"></div><p>Memuat menu…</p></div>
+<div id="errorScreen" class="error-screen" style="display:none"><h2>Menu Tidak Tersedia</h2><p id="errorMessage"></p><button onclick="location.reload()" class="error-retry">Muat Ulang</button></div>
+<header class="header"><div class="header-inner">
+  <div class="header-logo">
+    <div class="logo-placeholder" id="logoPlaceholder">🏪</div>
+    <div style="min-width:0"><h1 id="storeName">Memuat…</h1><p class="header-sub"><span id="storeAddress"></span><span class="meja-badge" id="mejaBadge"></span></p></div>
+  </div>
+  <button class="icon-btn" onclick="openCart()"><i data-lucide="shopping-bag"></i><span class="cart-badge" id="cartBadge">0</span></button>
+</div></header>
+<main class="main-content">
+  <div class="search-wrap"><i data-lucide="search" class="search-icon"></i><input type="text" id="searchInput" placeholder="Cari menu atau paket…" /></div>
+  <div class="cats-scroll" id="catsScroll"></div>
+  <div id="bundleSection" style="display:none"><div class="section-head"><h2 class="section-title">Paket Hemat</h2><span class="section-count" id="bundleCount"></span></div><div class="grid" id="bundleGrid"></div></div>
+  <div id="menuSection"><div class="section-head"><h2 class="section-title">Menu Kami</h2><span class="section-count" id="menuCount">0 item</span></div><div class="grid" id="menuGrid"></div></div>
+  <div id="emptyState" style="display:none;text-align:center;padding:48px 16px;color:var(--text-3)">Menu tidak ditemukan</div>
+</main>
+<div class="cart-bar" id="cartBar" onclick="openCart()"><div style="display:flex;align-items:center;gap:10px"><span class="cart-bar-count" id="cartBarCount">0</span><b>Lihat keranjang</b></div><b id="cartBarTotal">Rp 0</b></div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeCart()"></div>
+<aside class="drawer" id="cartDrawer"><div class="drawer-head"><h3>Keranjang</h3><button class="icon-btn" onclick="closeCart()"><i data-lucide="x"></i></button></div><div class="drawer-body" id="cartItems"></div><div class="drawer-foot" id="cartFooter"></div></aside>
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="sheet" id="itemSheet"><button class="sheet-close" onclick="closeSheet()"><i data-lucide="x"></i></button><div class="sheet-scroll" id="sheetContent"></div><div class="sheet-footer" id="sheetFooter"></div></div>
+<div class="modal-overlay" id="successModal"><div class="modal"><div style="font-size:48px">✅</div><h3>Order Terkirim!</h3><p style="margin:8px 0 18px;color:var(--text-2);font-size:14px">Pesanan kamu sedang diproses kasir. Terima kasih! 🙏</p><button class="btn-primary" style="width:100%" onclick="closeSuccessModal()">Tutup</button></div></div>
+<div class="toasts" id="toasts"></div>
+<script type="module">
+const firebaseConfig = {
+  apiKey: "AIzaSyAfs69_uPrvZ29Ug_SZKVFGRcGhFIjz_eA",
+  authDomain: "iyonzkasirv2.firebaseapp.com",
+  projectId: "iyonzkasirv2",
+  storageBucket: "iyonzkasirv2.firebasestorage.app",
+  messagingSenderId: "49269164832",
+  appId: "1:49269164832:web:95110b6331c9be4743a545",
+  measurementId: "G-4SRJ1EZYGV"
+};
+const params = new URLSearchParams(location.search);
+const STORE_ID = (params.get('store') || '').trim();
+const MEJA = (params.get('meja') || '').trim();
+let storeInfo = {}, menuData = [], bundleData = [], activeCat = 'semua', searchQuery = '', cart = [];
+let selectedItem = null, selectedBundle = null, bundlePicks = {}, selectedQty = 1, _busy = false;
+let _form = { nama: '', phone: '', notes: '' };
+const $ = id => document.getElementById(id);
+const money = p => 'Rp ' + (Number(p) || 0).toLocaleString('id-ID');
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const sanitizePhone = p => { let n = String(p||'').replace(/[^\d+]/g,''); if(n.startsWith('+'))n=n.slice(1); if(n.startsWith('0'))n='62'+n.slice(1); if(n.startsWith('620'))n='62'+n.slice(3); return n && !n.startsWith('62') ? '62'+n : n; };
+const icon = () => { if (window.lucide) lucide.createIcons(); };
+const saveCart = () => { try { localStorage.setItem('v2_cart_' + STORE_ID, JSON.stringify(cart)); } catch {} };
+function toast(msg, err = false) {
+  const el = document.createElement('div'); el.className = 'toast' + (err ? ' err' : ''); el.innerHTML = msg;
+  $('toasts').appendChild(el); setTimeout(() => el.remove(), 2200);
+}
+async function loadFirebase() {
+  try {
+    if (!STORE_ID) throw new Error('Link toko belum lengkap (?store=nama-toko)');
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getFirestore, doc, collection, getDoc, getDocs, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const db = getFirestore(initializeApp(firebaseConfig));
+    window._fb = { db, collection, addDoc, serverTimestamp };
+    const infoSnap = await getDoc(doc(db, 'stores', STORE_ID, 'info', 'config'));
+    if (!infoSnap.exists()) throw new Error('Toko "' + STORE_ID + '" belum dipublikasikan');
+    storeInfo = infoSnap.data() || {};
+    if (storeInfo.temaWarna && /^#[0-9a-fA-F]{3,8}$/.test(storeInfo.temaWarna)) {
+      document.documentElement.style.setProperty('--brand', storeInfo.temaWarna);
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', storeInfo.temaWarna);
+    }
+    const [mSnap, bSnap] = await Promise.all([
+      getDocs(collection(db, 'stores', STORE_ID, 'menu')),
+      getDocs(collection(db, 'stores', STORE_ID, 'bundles'))
+    ]);
+    menuData = mSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => m.nama)
+      .sort((a, b) => (a.urutan ?? 9999) - (b.urutan ?? 9999) || a.nama.localeCompare(b.nama, 'id'));
+    bundleData = bSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.nama)
+      .sort((a, b) => (a.urutan ?? 9999) - (b.urutan ?? 9999) || a.nama.localeCompare(b.nama, 'id'));
+    try { cart = JSON.parse(localStorage.getItem('v2_cart_' + STORE_ID) || '[]'); } catch { cart = []; }
+    $('storeName').textContent = storeInfo.nama || 'Toko';
+    $('storeAddress').textContent = storeInfo.alamat || '';
+    if (MEJA) { $('mejaBadge').textContent = 'Meja ' + MEJA; $('mejaBadge').classList.add('show'); }
+    renderCats(); renderCatalog(); updateCartUI(); $('loadingScreen').style.display = 'none';
+  } catch (e) {
+    $('loadingScreen').style.display = 'none'; $('errorScreen').style.display = 'flex'; $('errorMessage').textContent = e.message;
+  }
+}
+function renderCats() {
+  const cats = ['semua', ...(bundleData.length ? ['paket'] : []), ...new Set(menuData.map(m => m.kategori).filter(Boolean))];
+  $('catsScroll').innerHTML = cats.map(c => `<button class="cat-pill ${c === activeCat ? 'active' : ''}" onclick="setCat(decodeURIComponent('${encodeURIComponent(c)}'))">${esc(c === 'semua' ? 'Semua' : c === 'paket' ? '🎁 Paket' : c)}</button>`).join('');
+}
+function setCat(c) { activeCat = c; renderCats(); renderCatalog(); }
+function renderCatalog() {
+  const q = searchQuery.trim().toLowerCase();
+  const showB = activeCat === 'semua' || activeCat === 'paket';
+  const showM = activeCat !== 'paket';
+  const bList = showB ? bundleData.filter(b => !q || b.nama.toLowerCase().includes(q)) : [];
+  const mList = showM ? menuData.filter(m => (activeCat === 'semua' || m.kategori === activeCat) && (!q || m.nama.toLowerCase().includes(q))) : [];
+  $('bundleSection').style.display = bList.length ? 'block' : 'none';
+  $('bundleCount').textContent = bList.length + ' paket';
+  $('bundleGrid').innerHTML = bList.map(b => {
+    const ok = b.tersedia !== false;
+    return `<div class="card" onclick="openBundle('${esc(b.id)}')"><div class="card-media">${b.fotoUrl ? `<img src="${esc(b.fotoUrl)}">` : `<div class="ph">🎁</div>`}<span class="badge-tag">PAKET</span>${!ok ? `<div class="card-habis">Habis</div>` : `<div class="card-add"><i data-lucide="plus"></i></div>`}</div><div class="card-body"><div class="card-title">${esc(b.nama)}</div><div class="card-price">${money(b.hargaBundle)}${b.hargaAsli > b.hargaBundle ? `<span class="card-old">${money(b.hargaAsli)}</span>` : ''}</div></div></div>`;
+  }).join('');
+  $('menuSection').style.display = showM ? 'block' : 'none';
+  $('menuCount').textContent = mList.length + ' item';
+  $('menuGrid').innerHTML = mList.map(m => {
+    const ok = m.tersedia !== false;
+    return `<div class="card" onclick="openItem('${esc(m.id)}')"><div class="card-media">${m.fotoUrl ? `<img src="${esc(m.fotoUrl)}">` : `<div class="ph">🍽️</div>`}${!ok ? `<div class="card-habis">Habis</div>` : `<div class="card-add"><i data-lucide="plus"></i></div>`}</div><div class="card-body"><div class="card-title">${esc(m.nama)}</div><div class="card-price">${money(m.harga)}</div></div></div>`;
+  }).join('');
+  $('emptyState').style.display = (bList.length + mList.length === 0) ? 'block' : 'none';
+  icon();
+}
+function calcTotals() {
+  const sub = cart.reduce((s, c) => s + c.totalPrice, 0);
+  const taxPct = Number(storeInfo.pajakPersen) || 0;
+  const tax = taxPct > 0 ? Math.round(sub * taxPct / 100) : 0;
+  return { sub, taxPct, tax, total: sub + tax };
+}
+function updateCartUI() {
+  const count = cart.reduce((s, c) => s + c.qty, 0), { total } = calcTotals();
+  $('cartBadge').textContent = count; $('cartBadge').classList.toggle('show', count > 0);
+  $('cartBarCount').textContent = count; $('cartBarTotal').textContent = money(total);
+  $('cartBar').classList.toggle('show', count > 0);
+  if ($('cartDrawer').classList.contains('show')) renderCartDrawer();
+}
+function pushCartLine(key, menuId, nama, harga, qty, fotoUrl, isBundle) {
+  const ex = cart.find(c => c.key === key);
+  if (ex) { ex.qty += qty; ex.totalPrice = ex.harga * ex.qty; }
+  else cart.push({ key, menuId, nama, harga, qty, totalPrice: harga * qty, fotoUrl: fotoUrl || '', isBundle });
+  saveCart(); updateCartUI(); toast('✅ <b>' + esc(nama) + '</b> ditambahkan');
+}
+function openItem(id) {
+  const m = menuData.find(x => x.id === id); if (!m || m.tersedia === false) return toast('Item sedang habis', true);
+  selectedItem = m; selectedBundle = null; selectedQty = 1;
+  $('sheetContent').innerHTML = `<div class="sheet-hero">${m.fotoUrl ? `<img src="${esc(m.fotoUrl)}">` : `<div class="ph">🍽️</div>`}</div><div class="sheet-body"><h2>${esc(m.nama)}</h2><p style="color:var(--text-2);font-size:14px;margin:6px 0">${esc(m.deskripsi||'')}</p><b style="font-size:22px;color:var(--brand)">${money(m.harga)}</b></div>`;
+  renderSheetFooter(m.harga, true); showSheet();
+}
+function openBundle(id) {
+  const b = bundleData.find(x => x.id === id); if (!b || b.tersedia === false) return toast('Paket sedang habis', true);
+  selectedBundle = b; selectedItem = null; selectedQty = 1; bundlePicks = {};
+  (b.groups || []).forEach((g, gi) => {
+    const items = g.items || []; let defs = items.map((it, ii) => it.isDefaultPick ? ii : -1).filter(x => x >= 0);
+    if (!defs.length && (g.minPilih || 0) > 0) defs = items.slice(0, g.minPilih).map((_, ii) => ii);
+    bundlePicks[gi] = defs;
+  });
+  renderBundleSheet(); showSheet();
+}
+function bundleUnitPrice() {
+  let extra = 0;
+  (selectedBundle.groups || []).forEach((g, gi) => (bundlePicks[gi] || []).forEach(oi => { const it = g.items[oi]; if (it) extra += (Number(it.hargaExtra)||0)*(Number(it.qty)||1); }));
+  return (Number(selectedBundle.hargaBundle) || 0) + extra;
+}
+function isBundleValid() {
+  return (selectedBundle.groups || []).every((g, gi) => { const len = (bundlePicks[gi] || []).length; return g.wajib ? len >= (g.minPilih||0) && len <= (g.maxPilih||1) : len <= (g.maxPilih||1); });
+}
+function toggleBundleOpt(gi, oi) {
+  const g = selectedBundle.groups[gi], cur = bundlePicks[gi] || [], maxP = Number(g.maxPilih) || 1;
+  if (maxP === 1) bundlePicks[gi] = [oi];
+  else { const i = cur.indexOf(oi); if (i >= 0) cur.splice(i, 1); else if (cur.length < maxP) cur.push(oi); else toast('Maksimal ' + maxP, true); bundlePicks[gi] = cur; }
+  renderBundleSheet();
+}
+function renderBundleSheet() {
+  const b = selectedBundle, isFixed = b.tipe === 'FIXED';
+  const grpHtml = (b.groups || []).map((g, gi) => `<div class="b-group"><b>${esc(g.nama)}</b> <small style="color:var(--text-3)">${isFixed ? '' : g.wajib ? `(Wajib ${g.minPilih}-${g.maxPilih})` : `(Opsional maks ${g.maxPilih})`}</small>${(g.items||[]).map((it, oi) => {
+    const sel = (bundlePicks[gi]||[]).includes(oi);
+    return `<div class="b-opt ${sel?'sel':''}" ${isFixed?'':`onclick="toggleBundleOpt(${gi},${oi})"`}><span style="flex:1">${esc(it.nama)} ${it.qty>1?'×'+it.qty:''}</span>${it.hargaExtra>0?`<b style="color:var(--success)">+${money(it.hargaExtra)}</b>`:''}</div>`;
+  }).join('')}</div>`).join('');
+  $('sheetContent').innerHTML = `<div class="sheet-hero">${b.fotoUrl ? `<img src="${esc(b.fotoUrl)}">` : `<div class="ph">🎁</div>`}</div><div class="sheet-body"><h2>${esc(b.nama)}</h2><b style="font-size:22px;color:var(--brand)">${money(bundleUnitPrice())}</b>${grpHtml}</div>`;
+  renderSheetFooter(bundleUnitPrice(), isBundleValid());
+}
+function renderSheetFooter(unitPrice, valid) {
+  $('sheetFooter').innerHTML = `<div class="qty-ctrl"><button class="qty-btn" onclick="sheetQty(-1)"><i data-lucide="minus"></i></button><b id="sheetQtyNum">${selectedQty}</b><button class="qty-btn" onclick="sheetQty(1)"><i data-lucide="plus"></i></button></div><button class="btn-primary" id="sheetAddBtn" ${valid?'':'disabled'} onclick="addFromSheet()">Tambah · ${money(unitPrice * selectedQty)}</button>`;
+  icon();
+}
+function sheetQty(d) { selectedQty = Math.max(1, selectedQty + d); renderSheetFooter(selectedBundle ? bundleUnitPrice() : selectedItem.harga, selectedBundle ? isBundleValid() : true); }
+function addFromSheet() {
+  if (selectedBundle) {
+    const picks = []; (selectedBundle.groups||[]).forEach((g, gi) => (bundlePicks[gi]||[]).forEach(oi => { const it = g.items[oi]; if (it) picks.push(it.nama + (it.qty>1?' ×'+it.qty:'')); }));
+    const label = picks.length ? `${selectedBundle.nama} (${picks.join(', ')})` : selectedBundle.nama;
+    const sig = Object.entries(bundlePicks).map(([g,a]) => g+':'+a.join(',')).join('|');
+    pushCartLine('B:'+selectedBundle.id+':'+sig, selectedBundle.id, label, bundleUnitPrice(), selectedQty, selectedBundle.fotoUrl, true);
+  } else if (selectedItem) {
+    pushCartLine('M:'+selectedItem.id, selectedItem.id, selectedItem.nama, selectedItem.harga, selectedQty, selectedItem.fotoUrl, false);
+  }
+  closeSheet();
+}
+function showSheet() { $('itemSheet').classList.add('show'); $('sheetOverlay').classList.add('show'); }
+function closeSheet() { $('itemSheet').classList.remove('show'); $('sheetOverlay').classList.remove('show'); }
+function openCart() { $('cartDrawer').classList.add('show'); $('drawerOverlay').classList.add('show'); renderCartDrawer(); }
+function closeCart() { $('cartDrawer').classList.remove('show'); $('drawerOverlay').classList.remove('show'); }
+function changeQty(i, d) { const c = cart[i]; if (!c) return; c.qty += d; if (c.qty <= 0) cart.splice(i, 1); else c.totalPrice = c.harga * c.qty; saveCart(); updateCartUI(); }
+function removeCartItem(i) { cart.splice(i, 1); saveCart(); updateCartUI(); }
+function clearCart() { if (confirm('Kosongkan keranjang?')) { cart = []; saveCart(); updateCartUI(); } }
+function renderCartDrawer() {
+  if ($('custName')) _form = { nama: $('custName').value, phone: $('custPhone')?.value || '', notes: $('custNotes')?.value || '' };
+  if (!cart.length) { $('cartItems').innerHTML = `<p style="text-align:center;padding:48px 0;color:var(--text-3)">Keranjang kosong</p>`; $('cartFooter').innerHTML = ''; return; }
+  $('cartItems').innerHTML = cart.map((c, i) => `<div class="cart-item"><div class="cart-item-img">${c.fotoUrl?`<img src="${esc(c.fotoUrl)}">`:(c.isBundle?'🎁':'🍽️')}</div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px">${esc(c.nama)}</div><div style="color:var(--brand);font-weight:800;font-size:14px">${money(c.totalPrice)}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><button onclick="removeCartItem(${i})"><i data-lucide="trash-2" style="width:14px;height:14px;color:var(--text-3)"></i></button><div class="cart-qty"><button onclick="changeQty(${i},-1)">-</button><span>${c.qty}</span><button onclick="changeQty(${i},1)">+</button></div></div></div>`).join('');
+  const { sub, taxPct, tax, total } = calcTotals();
+  $('cartFooter').innerHTML = `<div class="field"><label>Nama Kamu *</label><input id="custName" value="${esc(_form.nama)}" placeholder="Nama"></div><div class="field"><label>No. WhatsApp (opsional)</label><input id="custPhone" type="tel" value="${esc(_form.phone)}" placeholder="0812xxx"></div><div class="field"><label>Catatan (opsional)</label><textarea id="custNotes" placeholder="Contoh: tanpa pedas">${esc(_form.notes)}</textarea></div><div class="summary"><div class="summary-row"><span>Subtotal</span><span>${money(sub)}</span></div>${tax>0?`<div class="summary-row"><span>Pajak (${taxPct}%)</span><span>${money(tax)}</span></div>`:''}</div><div class="total-row"><span>Total</span><span style="color:var(--brand)">${money(total)}</span></div><button class="btn-checkout" id="btnCheckout" onclick="checkout()"><i data-lucide="send"></i> Kirim Order & WA</button><button class="btn-ghost" onclick="clearCart()">Kosongkan</button>`;
+  icon();
+}
+async function checkout() {
+  if (_busy || !cart.length) return;
+  const nama = ($('custName')?.value || '').trim(); if (!nama) { toast('Isi nama dulu ya', true); return; }
+  const phone = ($('custPhone')?.value || '').trim(), notes = ($('custNotes')?.value || '').trim();
+  const { sub, tax, total } = calcTotals();
+  _busy = true; $('btnCheckout').disabled = true; $('btnCheckout').textContent = 'Mengirim…';
+  try {
+    const { db, collection, addDoc, serverTimestamp } = window._fb;
+    await addDoc(collection(db, 'stores', STORE_ID, 'orders'), {
+      customerNama: nama, customerTelepon: phone, meja: MEJA, catatan: notes,
+      items: cart.map(c => ({ menuId: c.menuId, nama: c.nama, harga: c.harga, qty: c.qty, totalPrice: c.totalPrice, isBundle: !!c.isBundle })),
+      subtotal: sub, pajak: tax, total: total, status: 'PENDING', source: 'WEB', timestamp: serverTimestamp()
+    });
+  } catch (e) { toast('⚠️ Gagal kirim ke sistem, lanjut ke WhatsApp', true); }
+  const wa = sanitizePhone(storeInfo.teleponWA || '');
+  let txt = `Halo *${storeInfo.nama||'Toko'}*, saya mau pesan:\n\n`;
+  cart.forEach(c => { txt += `• ${c.nama} × ${c.qty} — ${money(c.totalPrice)}\n`; });
+  if (tax > 0) txt += `\nSubtotal: ${money(sub)}\nPajak: ${money(tax)}`;
+  txt += `\n*Total:* ${money(total)}`;
+  if (MEJA) txt += `\n*Meja:* ${MEJA}`;
+  txt += `\n*Nama:* ${nama}`; if (phone) txt += `\n*HP:* ${phone}`; if (notes) txt += `\n*Catatan:* ${notes}`;
+  window.open(wa ? `https://wa.me/${wa}?text=${encodeURIComponent(txt)}` : `https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
+  cart = []; _form = { nama: '', phone: '', notes: '' }; saveCart(); updateCartUI(); closeCart();
+  $('successModal').classList.add('show'); _busy = false;
+}
+function closeSuccessModal() { $('successModal').classList.remove('show'); }
+document.addEventListener('DOMContentLoaded', () => {
+  $('searchInput').addEventListener('input', e => { searchQuery = e.target.value; renderCatalog(); });
+  loadFirebase();
+});
+Object.assign(window, { openCart, closeCart, setCat, openItem, openBundle, toggleBundleOpt, closeSheet, sheetQty, addFromSheet, changeQty, removeCartItem, clearCart, checkout, closeSuccessModal });
+</script>
+</body>
+</html>

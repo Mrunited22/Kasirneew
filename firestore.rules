@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Data internal bisnis & multi-cabang (hanya Owner/perangkat login akun Owner)
+    match /businesses/{bizId} {
+      allow read, write: if request.auth != null && request.auth.uid == bizId;
+
+      match /{allSub=**} {
+        allow read, write: if request.auth != null && request.auth.uid == bizId;
+      }
+    }
+
+    // Storefront Web Menu Digital
+    match /stores/{slug} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == request.auth.uid;
+
+      match /info/{docId} {
+        allow read: if true;
+        allow write: if request.auth != null
+          && get(/databases/$(database)/documents/stores/$(slug)).data.ownerUid == request.auth.uid;
+      }
+
+      match /menu/{itemId} {
+        allow read: if true;
+        allow write: if request.auth != null
+          && get(/databases/$(database)/documents/stores/$(slug)).data.ownerUid == request.auth.uid;
+      }
+
+      match /bundles/{bundleId} {
+        allow read: if true;
+        allow write: if request.auth != null
+          && get(/databases/$(database)/documents/stores/$(slug)).data.ownerUid == request.auth.uid;
+      }
+
+      match /orders/{orderId} {
+        allow create: if request.resource.data.keys().hasAll(['customerNama', 'items', 'total', 'status', 'source'])
+          && request.resource.data.status == 'PENDING'
+          && request.resource.data.source == 'WEB'
+          && request.resource.data.total is number
+          && request.resource.data.total > 0
+          && request.resource.data.items is list
+          && request.resource.data.items.size() > 0;
+        allow read, update, delete: if request.auth != null
+          && get(/databases/$(database)/documents/stores/$(slug)).data.ownerUid == request.auth.uid;
+      }
+    }
+  }
+}
