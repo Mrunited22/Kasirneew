@@ -50,7 +50,7 @@ fun WebStoreV2Screen(app: AppContainer, onBack: () -> Unit) {
     }
     val chosenOutlet = outlets.firstOrNull { it.id == selectedOutletId } ?: outlets.firstOrNull()
     val activeUrl = if (savedSlug.isNotBlank()) {
-        val base = "https://iyonzkasirapp-8dfd5.web.app/?store=$savedSlug"
+        val base = "https://iyonzkasirv2.web.app/?store=$savedSlug"
         if (tableNo.isBlank()) base else "$base&meja=${tableNo.trim()}"
     } else ""
 

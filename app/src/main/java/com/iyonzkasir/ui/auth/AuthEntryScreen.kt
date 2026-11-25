@@ -52,7 +52,7 @@ fun AuthEntryScreen(
             Icon(Icons.Default.Storefront, null, Modifier.size(40.dp), tint = Color.White)
         }
         Spacer(Modifier.height(AppSp.md))
-        Text("iyonzkasir", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text("iyonzkasir", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Text("Kasir simpel untuk warung, gerobak & multi-cabang", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(AppSp.xl))
 
